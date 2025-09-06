@@ -10,6 +10,7 @@ import Foundation
 struct ModelMemorizeGame<CardContent> where CardContent: Equatable {
     
     private(set) var cards: [Card]
+    var score: Int = 0
     
     init(numberOfPairsOfCards: Int, myCardContentFactory: (Int) -> CardContent) {
         cards = []
@@ -18,9 +19,10 @@ struct ModelMemorizeGame<CardContent> where CardContent: Equatable {
             cards.append(Card(content: content))
             cards.append(Card(content: content))
         }
+        //cards.shuffle() FIXME: поменяй потом как закончишь с логикой очков
     }
     
-    var indexOfTheOneandOnlyFaceUpCard: Int? {
+    var indexOfTheOneAndOnlyFaceUpCard: Int? {
         get { cards.indices.filter {index in cards[index].isFaceUp}.only }
         set { cards.indices.forEach {cards[$0].isFaceUp = (newValue == $0)} }
     }
@@ -28,17 +30,20 @@ struct ModelMemorizeGame<CardContent> where CardContent: Equatable {
     mutating func choose(_ card: Card) {
         if let chosenIndex = cards.firstIndex(where: { $0.id == card.id }) {
             if !cards[chosenIndex].isFaceUp && !cards[chosenIndex].isMatched {
-                if let potentialMatchIndex = indexOfTheOneandOnlyFaceUpCard {
+                if let potentialMatchIndex = indexOfTheOneAndOnlyFaceUpCard {
                     if cards[potentialMatchIndex].content == cards[chosenIndex].content {
                         cards[potentialMatchIndex].isMatched = true
                         cards[chosenIndex].isMatched = true
+                        score += 2
                     }
-                    cards[chosenIndex].isFaceUp = true // Переворачиваем карту
+                    if cards[chosenIndex].isViewed && !cards[chosenIndex].isMatched {
+                        score -= 1
+                    }
                 } else {
-                    // Нет других перевернутых карт
-                    indexOfTheOneandOnlyFaceUpCard = chosenIndex
-                    cards[chosenIndex].isFaceUp = true // Переворачиваем карту
+                    indexOfTheOneAndOnlyFaceUpCard = chosenIndex
                 }
+                cards[chosenIndex].isFaceUp = true
+                cards[chosenIndex].isViewed = true
             }
         }
     }
@@ -51,6 +56,7 @@ struct ModelMemorizeGame<CardContent> where CardContent: Equatable {
         var isFaceUp = false
         var isMatched = false
         var content: CardContent
+        var isViewed = false
         
         var id = UUID()
     }

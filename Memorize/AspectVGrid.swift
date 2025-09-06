@@ -47,7 +47,3 @@ struct AspectVGrid <Item: Identifiable, ItemView: View>: View {
         return min(size.width / count, size.height * aspectRatio).rounded(.down)
     }
 }
-
-#Preview {
-    //AspectVGrid()
-}

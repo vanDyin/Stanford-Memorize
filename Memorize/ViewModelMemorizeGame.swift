@@ -9,19 +9,44 @@ import SwiftUI
 
 class EmojiMemorizeGame: ObservableObject {
     
-    private static let emojis = ["💀", "👻", "🎃", "🕷️", "🕸️", "🪦", "☠️", "👿", "🧟‍♂️", "👹", "dsa"]
+    private static let arrayOfThemes = [
+        Theme(name: "Halloween",
+              emojis: ["💀", "👻", "🎃", "🕷️", "🕸️", "🪦", "☠️", "👿", "🧟‍♂️", "👹"],
+              color: Color.orange),
+        Theme(name: "Animals",
+              emojis: ["🐶", "🐷", "🐤", "🐯", "🐻", "🐱", "🦊", "🐧"],
+              color: Color.red),
+        Theme(name: "Vehicles",
+              emojis: ["🚗", "🏎️", "🛵", "✈️", "🚀", "⛵️", "🚂", "🚜", "🚲", "🚙", "🚌"],
+              color: Color.blue),
+        Theme(name: "Flags",
+              emojis: ["🏴‍☠️", "🇧🇾", "🇷🇺", "🇦🇫", "🇧🇧", "🇯🇵", "🇬🇧"],
+              color: Color.green),
+        Theme(name: "Fruits",
+              emojis: ["🍎", "🍊", "🍋", "🍍", "🍑", "🍌"],
+              color: Color.yellow),
+        Theme(name: "Balls",
+              emojis: ["⚽️", "🏀", "🏈", "🎾", "🏐"],
+              color: Color.black),
+    ]
     
-    private static func createMemoizeGame() -> ModelMemorizeGame<String> {
-        return ModelMemorizeGame(numberOfPairsOfCards: emojis.count) { pairIndex in
-            if emojis.indices.contains(pairIndex) {
-                return emojis[pairIndex]
+    var currentTheme: Theme
+    @Published private var model: ModelMemorizeGame<String>
+    var score: Int { model.score }
+    
+    init() {
+        (currentTheme, model) = EmojiMemorizeGame.startGame()
+    }
+    
+    private static func createMemorizeGame(theme: Theme) -> ModelMemorizeGame<String> {
+        return ModelMemorizeGame(numberOfPairsOfCards: theme.emojis.count) { pairIndex in
+            if theme.emojis.indices.contains(pairIndex) {
+                return theme.emojis[pairIndex]
             } else {
                 return "⁉️"
             }
         }
     }
-    
-    @Published private var model = createMemoizeGame()
     
     var cards: [ModelMemorizeGame<String>.Card] {
         return model.cards
@@ -33,8 +58,33 @@ class EmojiMemorizeGame: ObservableObject {
         model.shuffle()
     }
     
+    func restart() {
+        (currentTheme, model) = EmojiMemorizeGame.startGame()
+    }
+    
     func choose(_ card: ModelMemorizeGame<String>.Card) {
         return model.choose(card)
     }
+    
+    struct Theme {
+        let name: String
+        let emojis: [String]
+        let numberOfPairsOfCards: Int?
+        let color: Color
+        
+        init(name: String, emojis: [String], color: Color) {
+            self.name = name
+            self.emojis = emojis
+            numberOfPairsOfCards = emojis.count
+            self.color = color
+        }
+    }
 }
 
+private extension EmojiMemorizeGame {
+    static func startGame() -> (Theme, ModelMemorizeGame<String>) {
+        let theme = arrayOfThemes.randomElement()!
+        let model = createMemorizeGame(theme: theme)
+        return (theme, model)
+    }
+}

@@ -15,15 +15,21 @@ struct ViewMemorizeGame: View {
         VStack {
             title
             cards
-                .padding()
                 .animation(.default, value: viewModel.cards)
-            shuffleButton
+            HStack {
+                restartButton
+                Spacer()
+                scoreBoard
+                Spacer()
+                shuffleButton
+            }
         }
+        .padding()
     }
     
     var cards: some View {
         AspectVGrid(viewModel.cards, aspectRatio: aspectRatio) { card in
-            CardView(card)
+            CardView(viewModel: viewModel, card)
                 .padding(2)
                 .onTapGesture {
                     viewModel.choose(card)
@@ -32,23 +38,39 @@ struct ViewMemorizeGame: View {
     }
     
     var title: some View {
-        Text("Memorize!")
-            .font(.largeTitle)
+        VStack {
+            Text("Memorize!")
+                .font(.largeTitle)
+            Text("\(viewModel.currentTheme.name)")
+                .font(.title2)
+        }
+    }
+    
+    var restartButton: some View {
+        Button("Restart") {
+            viewModel.restart()
+        }
     }
     
     var shuffleButton: some View {
         Button("Shuffle") {
             viewModel.shuffle()
-            print(cards)
         }
+    }
+    
+    var scoreBoard: some View {
+        Text("\(viewModel.score)")
+            .font(.largeTitle)
     }
 }
 
 struct CardView: View {
+    @ObservedObject var viewModel: EmojiMemorizeGame
     let card: ModelMemorizeGame<String>.Card
 
-    init(_ card: ModelMemorizeGame<String>.Card) {
+    init(viewModel: EmojiMemorizeGame, _ card: ModelMemorizeGame<String>.Card) {
         self.card = card
+        self.viewModel = viewModel
     }
     
     var body: some View {
@@ -67,7 +89,7 @@ struct CardView: View {
             base.fill().opacity(card.isFaceUp ? 0 : 1)
         }
         .opacity(card.isFaceUp || !card.isMatched ? 1 : 0)
-        .foregroundStyle(Color.orange)
+        .foregroundStyle(viewModel.currentTheme.color)
     }
 }
 
