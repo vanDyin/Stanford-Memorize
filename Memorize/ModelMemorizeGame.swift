@@ -19,7 +19,7 @@ struct ModelMemorizeGame<CardContent> where CardContent: Equatable {
             cards.append(Card(content: content))
             cards.append(Card(content: content))
         }
-        //cards.shuffle() FIXME: поменяй потом как закончишь с логикой очков
+        cards.shuffle() FIXME: поменяй потом как закончишь с логикой очков
     }
     
     var indexOfTheOneAndOnlyFaceUpCard: Int? {
