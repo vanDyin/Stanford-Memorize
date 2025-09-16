@@ -16,7 +16,6 @@ struct ViewMemorizeGame: View {
         VStack {
             title
             cards
-                .animation(.default, value: viewModel.cards)
             HStack {
                 restartButton
                 Spacer()
@@ -33,7 +32,10 @@ struct ViewMemorizeGame: View {
             CardView(viewModel: viewModel, card)
                 .padding(spacing)
                 .onTapGesture {
-                    viewModel.choose(card)
+                    withAnimation {
+                        viewModel.choose(card)
+                    }
+
                 }
         }
     }
@@ -55,7 +57,9 @@ struct ViewMemorizeGame: View {
     
     var shuffleButton: some View {
         Button("Shuffle") {
-            viewModel.shuffle()
+            withAnimation {
+                viewModel.shuffle()
+            }
         }
     }
     

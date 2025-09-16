@@ -53,7 +53,7 @@ struct ModelMemorizeGame<CardContent> where CardContent: Equatable {
     }
     
     struct Card: Equatable, Identifiable {
-        var isFaceUp = true
+        var isFaceUp = false
         var isMatched = false
         var content: CardContent
         var isViewed = false

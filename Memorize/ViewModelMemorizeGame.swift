@@ -40,7 +40,7 @@ class EmojiMemorizeGame: ObservableObject {
     }
     
     private static func createMemorizeGame(theme: Theme) -> ModelMemorizeGame<String> {
-        return ModelMemorizeGame(numberOfPairsOfCards: 2) { pairIndex in //numberOfPairsOfCards: theme.emojis.count
+        return ModelMemorizeGame(numberOfPairsOfCards: theme.emojis.count) { pairIndex in //numberOfPairsOfCards: theme.emojis.count
             if theme.emojis.indices.contains(pairIndex) {
                 return theme.emojis[pairIndex]
             } else {
