@@ -10,7 +10,7 @@ import Foundation
 struct ModelMemorizeGame<CardContent> where CardContent: Equatable {
     
     private(set) var cards: [Card]
-    var score: Int = 0
+    private(set) var score: Int = 0
     
     init(numberOfPairsOfCards: Int, myCardContentFactory: (Int) -> CardContent) {
         cards = []
@@ -43,7 +43,6 @@ struct ModelMemorizeGame<CardContent> where CardContent: Equatable {
                     indexOfTheOneAndOnlyFaceUpCard = chosenIndex
                 }
                 cards[chosenIndex].isFaceUp = true
-                cards[chosenIndex].isViewed = true
             }
         }
     }
@@ -53,7 +52,13 @@ struct ModelMemorizeGame<CardContent> where CardContent: Equatable {
     }
     
     struct Card: Equatable, Identifiable {
-        var isFaceUp = false
+        var isFaceUp = false {
+            didSet {
+                if oldValue && !isFaceUp {
+                    isViewed = true
+                }
+            }
+        }
         var isMatched = false
         var content: CardContent
         var isViewed = false

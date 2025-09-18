@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct ViewMemorizeGame: View {
+    typealias Card = ModelMemorizeGame<String>.Card
+    
     @ObservedObject var viewModel: EmojiMemorizeGame
     private let aspectRatio: CGFloat = 2/3
     private let spacing: CGFloat = 2
@@ -31,6 +33,9 @@ struct ViewMemorizeGame: View {
         AspectVGrid(viewModel.cards, aspectRatio: aspectRatio) { card in
             CardView(viewModel: viewModel, card)
                 .padding(spacing)
+                .overlay {
+                    FlyingNumber(number: scoreChange(causedBy: card))
+                }
                 .onTapGesture {
                     withAnimation {
                         viewModel.choose(card)
@@ -38,6 +43,10 @@ struct ViewMemorizeGame: View {
 
                 }
         }
+    }
+    
+    private func scoreChange(causedBy card: Card) -> Int {
+        return 0
     }
     
     var title: some View {
@@ -64,8 +73,9 @@ struct ViewMemorizeGame: View {
     }
     
     var scoreBoard: some View {
-        Text("\(viewModel.score)")
+        Text("Score: \(viewModel.score)")
             .font(.largeTitle)
+            .animation(nil)
     }
 }
 
