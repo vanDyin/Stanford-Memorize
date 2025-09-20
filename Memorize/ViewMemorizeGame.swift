@@ -13,6 +13,9 @@ struct ViewMemorizeGame: View {
     @ObservedObject var viewModel: EmojiMemorizeGame
     private let aspectRatio: CGFloat = 2/3
     private let spacing: CGFloat = 2
+    private let deckWidth: CGFloat = 50
+    private let dealInterval: TimeInterval = 0.15
+    private let dealAnimation: Animation = .easeIn(duration: 0.5)
     
     var body: some View {
         VStack {
@@ -33,16 +36,14 @@ struct ViewMemorizeGame: View {
         AspectVGrid(viewModel.cards, aspectRatio: aspectRatio) { card in
             if isDealt(card) {
                 CardView(viewModel: viewModel, card)
+                    .matchedGeometryEffect(id: card.id, in: dealingNamespace)
+                    .transition(.asymmetric(insertion: .identity, removal: .identity))
                     .padding(spacing)
                     .overlay(FlyingNumber(number: scoreChange(causedBy: card)))
                     .zIndex(scoreChange(causedBy: card) != 0 ? 100 : 0)
                     .onTapGesture {
                         choose(card)
                     }
-                    .transition(.offset(
-                        x: CGFloat.random(in: -1000...1000),
-                        y: CGFloat.random(in: -1000...1000)
-                    ))
             }
         }
     }
@@ -98,22 +99,28 @@ struct ViewMemorizeGame: View {
         viewModel.cards.filter { !isDealt($0) }
     }
     
-    private let deckWidth: CGFloat = 50
     
     private var deck: some View {
         ZStack {
             ForEach(undealtCards) { card in
                 CardView(viewModel: viewModel, card)
                     .matchedGeometryEffect(id: card.id, in: dealingNamespace)
+                    .transition(.asymmetric(insertion: .identity, removal: .identity))
             }
         }
         .frame(width: deckWidth, height: deckWidth / aspectRatio)
         .onTapGesture {
-            withAnimation {
-                for card in viewModel.cards {
-                    dealt.insert(card.id)
-                }
+            deal()
+        }
+    }
+    
+    private func deal() {
+        var delay: TimeInterval = 0
+        for card in viewModel.cards {
+            withAnimation(dealAnimation.delay(delay)) {
+                _ = dealt.insert(card.id)
             }
+            delay += dealInterval
         }
     }
 }
