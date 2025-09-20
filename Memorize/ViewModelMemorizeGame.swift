@@ -59,10 +59,6 @@ class EmojiMemorizeGame: ObservableObject {
         model.shuffle()
     }
     
-    func restart() {
-        (currentTheme, model) = EmojiMemorizeGame.startGame()
-    }
-    
     func choose(_ card: Card) {
         return model.choose(card)
     }

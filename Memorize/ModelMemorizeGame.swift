@@ -34,7 +34,7 @@ struct ModelMemorizeGame<CardContent> where CardContent: Equatable {
                     if cards[potentialMatchIndex].content == cards[chosenIndex].content {
                         cards[potentialMatchIndex].isMatched = true
                         cards[chosenIndex].isMatched = true
-                        score += 2
+                        score += 2 + cards[chosenIndex].bonus + cards[potentialMatchIndex].bonus
                     }
                     if cards[chosenIndex].isViewed && !cards[chosenIndex].isMatched {
                         score -= 1
@@ -54,14 +54,59 @@ struct ModelMemorizeGame<CardContent> where CardContent: Equatable {
     struct Card: Equatable, Identifiable {
         var isFaceUp = false {
             didSet {
+                if isFaceUp {
+                    startUsingBonusTime()
+                } else {
+                    stopUsingBonusTime()
+                }
                 if oldValue && !isFaceUp {
                     isViewed = true
                 }
             }
         }
-        var isMatched = false
+        var isMatched = false {
+            didSet {
+                if isMatched {
+                    stopUsingBonusTime()
+                }
+            }
+        }
         var content: CardContent
         var isViewed = false
+        
+        //MARK: bonus time
+        var bonus: Int {
+            Int(bonusTimeLimit * bonusPercentRemaining)
+        }
+        
+        private mutating func startUsingBonusTime() {
+            if isFaceUp && !isMatched && bonusPercentRemaining > 0, lastFaceUpDate == nil {
+                lastFaceUpDate = Date()
+            }
+        }
+        
+        private mutating func stopUsingBonusTime() {
+            pastFaceUpTime = faceUpTime
+            lastFaceUpDate = nil
+        }
+        
+        var faceUpTime: TimeInterval {
+            if let lastFaceUpDate {
+                return pastFaceUpTime + Date().timeIntervalSince(lastFaceUpDate)
+            } else {
+                return pastFaceUpTime
+            }
+        }
+        
+        var bonusTimeLimit: TimeInterval = 6
+        
+        var bonusPercentRemaining: Double {
+            bonusTimeLimit > 0 ? max(0, bonusTimeLimit - faceUpTime)/bonusTimeLimit : 0
+        }
+        
+        var lastFaceUpDate: Date?
+        
+        var pastFaceUpTime: TimeInterval = 0
         
         var id = UUID()
     }

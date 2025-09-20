@@ -19,9 +19,9 @@ struct ViewMemorizeGame: View {
             title
             cards
             HStack {
-                restartButton
-                Spacer()
                 scoreBoard
+                Spacer()
+                deck
                 Spacer()
                 shuffleButton
             }
@@ -31,13 +31,19 @@ struct ViewMemorizeGame: View {
     
     var cards: some View {
         AspectVGrid(viewModel.cards, aspectRatio: aspectRatio) { card in
-            CardView(viewModel: viewModel, card)
-                .padding(spacing)
-                .overlay(FlyingNumber(number: scoreChange(causedBy: card)))
-                .zIndex(scoreChange(causedBy: card) != 0 ? 100 : 0)
-                .onTapGesture {
-                    choose(card)
-                }
+            if isDealt(card) {
+                CardView(viewModel: viewModel, card)
+                    .padding(spacing)
+                    .overlay(FlyingNumber(number: scoreChange(causedBy: card)))
+                    .zIndex(scoreChange(causedBy: card) != 0 ? 100 : 0)
+                    .onTapGesture {
+                        choose(card)
+                    }
+                    .transition(.offset(
+                        x: CGFloat.random(in: -1000...1000),
+                        y: CGFloat.random(in: -1000...1000)
+                    ))
+            }
         }
     }
     
@@ -56,7 +62,7 @@ struct ViewMemorizeGame: View {
         return card.id == id ? amount : 0
     }
     
-    var title: some View {
+    private var title: some View {
         VStack {
             Text("Memorize!")
                 .font(.largeTitle)
@@ -65,13 +71,7 @@ struct ViewMemorizeGame: View {
         }
     }
     
-    var restartButton: some View {
-        Button("Restart") {
-            viewModel.restart()
-        }
-    }
-    
-    var shuffleButton: some View {
+    private var shuffleButton: some View {
         Button("Shuffle") {
             withAnimation {
                 viewModel.shuffle()
@@ -79,10 +79,42 @@ struct ViewMemorizeGame: View {
         }
     }
     
-    var scoreBoard: some View {
+    private var scoreBoard: some View {
         Text("Score: \(viewModel.score)")
             .font(.largeTitle)
             .animation(nil)
+    }
+    
+    //MARK: Dealing from a Deck
+
+    @State private var dealt = Set<Card.ID>()
+    @Namespace private var dealingNamespace
+    
+    private func isDealt(_ card: Card) -> Bool {
+        dealt.contains(card.id)
+    }
+    
+    private var undealtCards: [Card] {
+        viewModel.cards.filter { !isDealt($0) }
+    }
+    
+    private let deckWidth: CGFloat = 50
+    
+    private var deck: some View {
+        ZStack {
+            ForEach(undealtCards) { card in
+                CardView(viewModel: viewModel, card)
+                    .matchedGeometryEffect(id: card.id, in: dealingNamespace)
+            }
+        }
+        .frame(width: deckWidth, height: deckWidth / aspectRatio)
+        .onTapGesture {
+            withAnimation {
+                for card in viewModel.cards {
+                    dealt.insert(card.id)
+                }
+            }
+        }
     }
 }
 
