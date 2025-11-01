@@ -11,7 +11,7 @@ struct CardView: View {
     typealias Card = ModelMemorizeGame<String>.Card
     let card: Card
     
-    @ObservedObject var viewModel: EmojiMemorizeGame
+    var viewModel: EmojiMemorizeGame
 
     init(viewModel: EmojiMemorizeGame, _ card: Card) {
         self.card = card

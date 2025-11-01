@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+import Observation
 
-class EmojiMemorizeGame: ObservableObject {
+@Observable
+class EmojiMemorizeGame {
     typealias Card = ModelMemorizeGame<String>.Card
     
     private static let arrayOfThemes = [
@@ -32,7 +34,7 @@ class EmojiMemorizeGame: ObservableObject {
     ]
     
     var currentTheme: Theme
-    @Published private var model: ModelMemorizeGame<String>
+    private var model: ModelMemorizeGame<String>
     var score: Int { model.score }
     
     init() {
@@ -40,7 +42,7 @@ class EmojiMemorizeGame: ObservableObject {
     }
     
     private static func createMemorizeGame(theme: Theme) -> ModelMemorizeGame<String> {
-        return ModelMemorizeGame(numberOfPairsOfCards: theme.emojis.count) { pairIndex in //numberOfPairsOfCards: theme.emojis.count
+        return ModelMemorizeGame(numberOfPairsOfCards: theme.emojis.count) { pairIndex in 
             if theme.emojis.indices.contains(pairIndex) {
                 return theme.emojis[pairIndex]
             } else {
