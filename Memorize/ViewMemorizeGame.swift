@@ -19,7 +19,6 @@ struct ViewMemorizeGame: View {
     
     var body: some View {
         VStack {
-            title
             cards
             HStack {
                 scoreBoard
@@ -61,15 +60,6 @@ struct ViewMemorizeGame: View {
     private func scoreChange(causedBy card: Card) -> Int {
         let (amount, id) = lastScoreChange
         return card.id == id ? amount : 0
-    }
-    
-    private var title: some View {
-        VStack {
-            Text("Memorize!")
-                .font(.largeTitle)
-            Text("\(viewModel.currentTheme.name)")
-                .font(.title2)
-        }
     }
     
     private var shuffleButton: some View {
@@ -125,7 +115,7 @@ struct ViewMemorizeGame: View {
     }
 }
 
-#Preview {
-    ViewMemorizeGame(viewModel: EmojiMemorizeGame())
-}
+//#Preview {
+//    ViewMemorizeGame(viewModel: EmojiMemorizeGame())
+//}
 

@@ -12,33 +12,13 @@ import Observation
 class EmojiMemorizeGame {
     typealias Card = ModelMemorizeGame<String>.Card
     
-    private static let arrayOfThemes = [
-        Theme(name: "Halloween",
-              emojis: ["💀", "👻", "🎃", "🕷️", "🕸️", "🪦", "☠️", "👿", "🧟‍♂️", "👹"],
-              color: Color.orange),
-        Theme(name: "Animals",
-              emojis: ["🐶", "🐷", "🐤", "🐯", "🐻", "🐱", "🦊", "🐧"],
-              color: Color.red),
-        Theme(name: "Vehicles",
-              emojis: ["🚗", "🏎️", "🛵", "✈️", "🚀", "⛵️", "🚂", "🚜", "🚲", "🚙", "🚌"],
-              color: Color.blue),
-        Theme(name: "Flags",
-              emojis: ["🏴‍☠️", "🇧🇾", "🇷🇺", "🇦🇫", "🇧🇧", "🇯🇵", "🇬🇧"],
-              color: Color.green),
-        Theme(name: "Fruits",
-              emojis: ["🍎", "🍊", "🍋", "🍍", "🍑", "🍌"],
-              color: Color.yellow),
-        Theme(name: "Balls",
-              emojis: ["⚽️", "🏀", "🏈", "🎾", "🏐"],
-              color: Color.black),
-    ]
-    
-    var currentTheme: Theme
+    var theme: Theme
     private var model: ModelMemorizeGame<String>
     var score: Int { model.score }
     
-    init() {
-        (currentTheme, model) = EmojiMemorizeGame.startGame()
+    init(theme: Theme) {
+        self.theme = theme
+        model = EmojiMemorizeGame.startGame(theme)
     }
     
     private static func createMemorizeGame(theme: Theme) -> ModelMemorizeGame<String> {
@@ -64,26 +44,11 @@ class EmojiMemorizeGame {
     func choose(_ card: Card) {
         return model.choose(card)
     }
-    
-    struct Theme {
-        let name: String
-        let emojis: [String]
-        let numberOfPairsOfCards: Int?
-        let color: Color
-        
-        init(name: String, emojis: [String], color: Color) {
-            self.name = name
-            self.emojis = emojis
-            numberOfPairsOfCards = emojis.count
-            self.color = color
-        }
-    }
 }
 
 private extension EmojiMemorizeGame {
-    static func startGame() -> (Theme, ModelMemorizeGame<String>) {
-        let theme = arrayOfThemes.randomElement()!
+    static func startGame(_ theme: Theme) -> (ModelMemorizeGame<String>) {
         let model = createMemorizeGame(theme: theme)
-        return (theme, model)
+        return model
     }
 }

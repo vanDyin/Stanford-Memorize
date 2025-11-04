@@ -27,7 +27,8 @@ struct CardView: View {
                     .padding(Constants.inser)
                     .cardify(isFaceUp: card.isFaceUp)
                     .transition(.scale)
-                    .foregroundStyle(viewModel.currentTheme.color)
+                    //.foregroundStyle(viewModel.theme.color)
+                    //FIXME: theme.color
             } else {
                 Color.clear
             }
@@ -67,15 +68,21 @@ extension Animation {
 
 #Preview {
     typealias Card = CardView.Card
-    return VStack {
-        HStack {
-            CardView(viewModel: EmojiMemorizeGame(), Card(content: "X"))
-            CardView(viewModel: EmojiMemorizeGame(), Card(isFaceUp: true, content: "X"))
-        }
-        HStack {
-            CardView(viewModel: EmojiMemorizeGame(), Card(isFaceUp: true, isMatched: true, content: "X"))
-            CardView(viewModel: EmojiMemorizeGame(), Card(isMatched: true, content: "X"))
+    
+    struct Preview: View {
+        var body: some View {
+            VStack {
+                HStack {
+                    CardView(viewModel: EmojiMemorizeGame(theme: ThemeStore().themes.first!), Card(content: "X"))
+                    CardView(viewModel: EmojiMemorizeGame(theme: ThemeStore().themes.first!), Card(isFaceUp: true, content: "X"))
+                }
+                HStack {
+                    CardView(viewModel: EmojiMemorizeGame(theme: ThemeStore().themes.first!), Card(isFaceUp: true, isMatched: true, content: "X"))
+                    CardView(viewModel: EmojiMemorizeGame(theme: ThemeStore().themes.first!), Card(isMatched: true, content: "X"))
+                }
+            }
+            .padding()
         }
     }
-    .padding()
+    return Preview()
 }
