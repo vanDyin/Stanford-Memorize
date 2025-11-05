@@ -115,7 +115,7 @@ struct ViewMemorizeGame: View {
     }
 }
 
-//#Preview {
-//    ViewMemorizeGame(viewModel: EmojiMemorizeGame())
-//}
+#Preview {
+    ViewMemorizeGame(viewModel: EmojiMemorizeGame(theme: ThemeStore().themes.first!))
+}
 

@@ -22,9 +22,10 @@ class EmojiMemorizeGame {
     }
     
     private static func createMemorizeGame(theme: Theme) -> ModelMemorizeGame<String> {
-        return ModelMemorizeGame(numberOfPairsOfCards: theme.emojis.count) { pairIndex in 
-            if theme.emojis.indices.contains(pairIndex) {
-                return theme.emojis[pairIndex]
+        let emojiArray = Array(theme.emojis)
+        return ModelMemorizeGame(numberOfPairsOfCards: theme.numberOfPairs) { pairIndex in
+            if pairIndex < emojiArray.count {
+                return String(emojiArray[pairIndex])
             } else {
                 return "⁉️"
             }

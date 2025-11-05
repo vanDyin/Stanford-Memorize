@@ -11,12 +11,12 @@ import Observation
 @Observable
 class ThemeStore {
     static var initialThemes: [Theme] {[
-        Theme(name: "Halloween", color: RGBA(color: .orange), numberOfPairs: 10, emojis: ["💀", "👻", "🎃", "🕷️", "🕸️", "🪦", "☠️", "👿", "🧟‍♂️", "👹"]),
-        Theme(name: "Animals", color: RGBA(color: .red), numberOfPairs: 8, emojis: ["🐶", "🐷", "🐤", "🐯", "🐻", "🐱", "🦊", "🐧"]),
-        Theme(name: "Vehicles", color: RGBA(color: .blue), numberOfPairs: 11, emojis: ["🚗", "🏎️", "🛵", "✈️", "🚀", "⛵️", "🚂", "🚜", "🚲", "🚙", "🚌"]),
-        Theme(name: "Flags", color: RGBA(color: .green), numberOfPairs: 7, emojis: ["🏴‍☠️", "🇧🇾", "🇷🇺", "🇦🇫", "🇧🇧", "🇯🇵", "🇬🇧"]),
-        Theme(name: "Fruits", color: RGBA(color: .yellow), numberOfPairs: 6, emojis: ["🍎", "🍊", "🍋", "🍍", "🍑", "🍌"]),
-        Theme(name: "Balls", color: RGBA(color: .black), numberOfPairs: 5, emojis: ["⚽️", "🏀", "🏈", "🎾", "🏐"])
+        Theme(name: "Halloween", color: RGBA(color: .orange), numberOfPairs: 10, emojis: "💀👻🎃🕷️🕸️🪦☠️👿🧟‍♂️👹"),
+        Theme(name: "Animals", color: RGBA(color: .red), numberOfPairs: 8, emojis: "🐶🐷🐤🐯🐻🐱🦊🐧"),
+        Theme(name: "Vehicles", color: RGBA(color: .blue), numberOfPairs: 11, emojis: "🚗🏎️🛵✈️🚀⛵️🚂🚜🚲🚙🚌"),
+        Theme(name: "Flags", color: RGBA(color: .green), numberOfPairs: 7, emojis: "🏴‍☠️🇧🇾🇷🇺🇦🇫🇧🇧🇯🇵🇬🇧"),
+        Theme(name: "Fruits", color: RGBA(color: .yellow), numberOfPairs: 6, emojis: "🍎🍊🍋🍍🍑🍌"),
+        Theme(name: "Balls", color: RGBA(color: .black), numberOfPairs: 5, emojis: "⚽️🏀🏈🎾🏐")
     ]}
     
     //create json encoder and decoder for initialize computed property themes

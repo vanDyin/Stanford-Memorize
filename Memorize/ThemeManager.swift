@@ -12,7 +12,23 @@ struct ThemeManager: View {
     @Bindable var store: ThemeStore
     
     var body: some View {
-        ThemeEditor(theme: $store.themes.first!)
+        NavigationStack {
+            List {
+                ForEach(store.themes) { theme in
+                    NavigationLink(value: theme.id) {
+                        VStack(alignment: .leading) {
+                            Text(theme.name)
+                            Text(theme.emojis).lineLimit(1)
+                        }
+                    }
+                }
+            }
+            .navigationDestination(for: Theme.ID.self) { themeId in
+                if let index = store.themes.firstIndex(where: { $0.id == themeId}) {
+                    ThemeEditor(theme: $store.themes[index])
+                }
+            }
+        }
     }
 }
 
@@ -29,8 +45,10 @@ struct ThemeEditor: View {
             Section(header: Text("Emojis")) {
                 TextField("Add emojis here", text: $emojisToAdd)
                     .font(emojiFont)
-                    .onChange(of: emojisToAdd) { _, emojiToAdd in
-                        //Add emoji in theme 
+                    .onChange(of: emojisToAdd) { _, emojisToAdd in
+                        theme.emojis = (emojisToAdd + theme.emojis)
+                            .filter{ $0.isEmoji }
+                            .uniqued
                     }
                 removeEmojis
             }
@@ -42,11 +60,11 @@ struct ThemeEditor: View {
         VStack(alignment: .trailing) {
             Text("Tap to remove emoji").font(.caption).foregroundStyle(.gray)
             LazyVGrid(columns: [GridItem(.adaptive(minimum: 40))]) {
-                ForEach(theme.emojis, id: \.self) { emoji in
+                ForEach(theme.emojis.map(String.init), id: \.self) { emoji in
                     Text(emoji)
                         .onTapGesture {
-                            theme.emojis.removeAll(where: { $0 == emoji })
-                            emojisToAdd.removeAll(where: { String($0) == emoji })
+                            theme.emojis.remove(emoji.first!)
+                            emojisToAdd.remove(emoji.first!)
                         }
                 }
             }
@@ -65,13 +83,29 @@ extension Character {
     }
 }
 
-#Preview {
-    //ThemeManager(store: ThemeStore())
-    struct Preview: View {
-        @State var store = ThemeStore()
-        var body: some View {
-            ThemeEditor(theme: $store.themes.first!)
+extension String {
+    mutating func remove(_ ch: Character) {
+        removeAll(where: { $0 == ch })
+    }
+}
+
+extension String {
+    var uniqued: String {
+        reduce(into: "") { sofar, element in
+            if !sofar.contains(element) {
+                sofar.append(element)
+            }
         }
     }
-    return Preview()
+}
+
+#Preview {
+    ThemeManager(store: ThemeStore())
+//    struct Preview: View {
+//        @State var store = ThemeStore()
+//        var body: some View {
+//            ThemeEditor(theme: $store.themes.first!)
+//        }
+//    }
+//    return Preview()
 }
