@@ -27,8 +27,7 @@ struct CardView: View {
                     .padding(Constants.inser)
                     .cardify(isFaceUp: card.isFaceUp)
                     .transition(.scale)
-                    //.foregroundStyle(viewModel.theme.color)
-                    //FIXME: theme.color
+                    .foregroundStyle(Color(rgba: viewModel.theme.color))
             } else {
                 Color.clear
             }

@@ -36,13 +36,6 @@ class ThemeStore {
     }
 }
 
-//RGBA -> Color
-extension Color {
-    init(rgba: RGBA) {
-        self.init(.sRGB, red: rgba.red, green: rgba.green, blue: rgba.blue, opacity: rgba.alpha)
-    }
-}
-
 //Color -> RGBA
 extension RGBA {
     init(color: Color) {

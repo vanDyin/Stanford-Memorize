@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct Theme: Codable, Identifiable {
+struct Theme: Codable, Identifiable, Hashable {
     var name: String
     var color: RGBA
     var numberOfPairs: Int

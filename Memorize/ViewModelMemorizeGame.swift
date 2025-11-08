@@ -23,7 +23,8 @@ class EmojiMemorizeGame {
     
     private static func createMemorizeGame(theme: Theme) -> ModelMemorizeGame<String> {
         let emojiArray = Array(theme.emojis)
-        return ModelMemorizeGame(numberOfPairsOfCards: theme.numberOfPairs) { pairIndex in
+        let actualNumberOfPairs = min(theme.numberOfPairs, emojiArray.count)
+        return ModelMemorizeGame(numberOfPairsOfCards: actualNumberOfPairs) { pairIndex in
             if pairIndex < emojiArray.count {
                 return String(emojiArray[pairIndex])
             } else {

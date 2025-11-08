@@ -5,7 +5,6 @@
 //  Created by Вячеслав Полянский on 02.11.2025.
 //
 
-//View of ThemeStore
 import SwiftUI
 
 struct ThemeManager: View {
@@ -18,7 +17,8 @@ struct ThemeManager: View {
                     NavigationLink(value: theme.id) {
                         VStack(alignment: .leading) {
                             Text(theme.name)
-                            Text(theme.emojis).lineLimit(1)
+                            Text(theme.emojis)
+                                .lineLimit(1)
                         }
                     }
                 }
@@ -27,6 +27,9 @@ struct ThemeManager: View {
                 if let index = store.themes.firstIndex(where: { $0.id == themeId}) {
                     ThemeEditor(theme: $store.themes[index])
                 }
+            }
+            .navigationDestination(for: Theme.self) { theme in
+                ViewMemorizeGame(viewModel: EmojiMemorizeGame(theme: theme))
             }
         }
     }
@@ -52,8 +55,18 @@ struct ThemeEditor: View {
                     }
                 removeEmojis
             }
+            Section(header: Text("Color")) {
+                ColorPicker("Choose theme color", selection: Binding(
+                    get: { Color(rgba: theme.color) },
+                    set: { newColor in
+                        theme.color = RGBA(color: newColor)
+                    }
+                ))
+            }
+            startPlay
         }
         .frame(minWidth: 300, minHeight: 350)
+        .navigationTitle(theme.name)
     }
     
     var removeEmojis: some View {
@@ -63,13 +76,26 @@ struct ThemeEditor: View {
                 ForEach(theme.emojis.map(String.init), id: \.self) { emoji in
                     Text(emoji)
                         .onTapGesture {
-                            theme.emojis.remove(emoji.first!)
-                            emojisToAdd.remove(emoji.first!)
+                            if let firstEmoji = emoji.first {
+                                theme.emojis.remove(firstEmoji)
+                                emojisToAdd.remove(firstEmoji)
+                            }
                         }
                 }
             }
         }
         .font(emojiFont)
+    }
+    
+    var startPlay: some View {
+        NavigationLink(value: theme) {
+            Text("Start play!")
+                .frame(maxWidth: .infinity)
+                .foregroundStyle(.white)
+                .font(.largeTitle)
+                .padding()
+                .background(RoundedRectangle(cornerRadius: 20))
+       }
     }
 }
 
@@ -96,6 +122,13 @@ extension String {
                 sofar.append(element)
             }
         }
+    }
+}
+
+//RGBA -> Color
+extension Color {
+    init(rgba: RGBA) {
+        self.init(.sRGB, red: rgba.red, green: rgba.green, blue: rgba.blue, opacity: rgba.alpha)
     }
 }
 
