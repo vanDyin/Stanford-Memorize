@@ -15,12 +15,23 @@ struct ThemeManager: View {
             List {
                 ForEach(store.themes) { theme in
                     NavigationLink(value: theme.id) {
-                        VStack(alignment: .leading) {
-                            Text(theme.name)
+                        VStack(alignment: .leading, spacing: 12) {
+                            HStack {
+                                Text(theme.name)
+                                colorView(Color(rgba: theme.color))
+                            }
                             Text(theme.emojis)
                                 .lineLimit(1)
+                            Text("Number of emojis displayed: \(theme.numberOfPairs)")
+                            
                         }
                     }
+                }
+                .onMove { indexSet, offset in
+                    store.themes.move(fromOffsets: indexSet, toOffset: offset)
+                }
+                .onDelete { indexSet in
+                    store.themes.remove(atOffsets: indexSet)
                 }
             }
             .navigationDestination(for: Theme.ID.self) { themeId in
@@ -31,7 +42,32 @@ struct ThemeManager: View {
             .navigationDestination(for: Theme.self) { theme in
                 ViewMemorizeGame(viewModel: EmojiMemorizeGame(theme: theme))
             }
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    EditButton()
+                }
+                
+                ToolbarItem(placement: .topBarTrailing) {
+                    addButton
+                }
+            }
+            .navigationTitle("Themes")
+            .toolbarTitleDisplayMode(.inline)
         }
+    }
+    
+    var addButton: some View {
+        Button {
+            
+        } label: {
+            Image(systemName: "plus")
+        }
+    }
+    
+    func colorView(_ color: Color) -> some View {
+        return color
+            .frame(width: 15, height: 15)
+            .cornerRadius(10)
     }
 }
 
@@ -45,6 +81,20 @@ struct ThemeEditor: View {
             Section(header: Text("Name")) {
                 TextField("Name", text: $theme.name)
             }
+            
+            Section(header: Text("Number of Pairs")) {
+                Stepper("\(theme.numberOfPairs)", value: $theme.numberOfPairs, in: 2...max(2, theme.emojis.count))
+            }
+            
+            Section(header: Text("Color")) {
+                ColorPicker("Choose theme color", selection: Binding(
+                    get: { Color(rgba: theme.color) },
+                    set: { newColor in
+                        theme.color = RGBA(color: newColor)
+                    }
+                ))
+            }
+            
             Section(header: Text("Emojis")) {
                 TextField("Add emojis here", text: $emojisToAdd)
                     .font(emojiFont)
@@ -55,18 +105,10 @@ struct ThemeEditor: View {
                     }
                 removeEmojis
             }
-            Section(header: Text("Color")) {
-                ColorPicker("Choose theme color", selection: Binding(
-                    get: { Color(rgba: theme.color) },
-                    set: { newColor in
-                        theme.color = RGBA(color: newColor)
-                    }
-                ))
-            }
+            
             startPlay
         }
         .frame(minWidth: 300, minHeight: 350)
-        .navigationTitle(theme.name)
     }
     
     var removeEmojis: some View {
@@ -96,6 +138,7 @@ struct ThemeEditor: View {
                 .padding()
                 .background(RoundedRectangle(cornerRadius: 20))
        }
+        .disabled(theme.emojis.count < 2)
     }
 }
 

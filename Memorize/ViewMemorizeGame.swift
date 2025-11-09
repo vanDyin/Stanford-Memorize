@@ -10,7 +10,7 @@ import SwiftUI
 struct ViewMemorizeGame: View {
     typealias Card = ModelMemorizeGame<String>.Card
     
-    @State var viewModel: EmojiMemorizeGame
+    var viewModel: EmojiMemorizeGame
     private let aspectRatio: CGFloat = 2/3
     private let spacing: CGFloat = 2
     private let deckWidth: CGFloat = 50
@@ -29,6 +29,7 @@ struct ViewMemorizeGame: View {
             }
         }
         .padding()
+        .navigationTitle(viewModel.theme.name)
     }
     
     var cards: some View {
