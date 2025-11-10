@@ -34,6 +34,19 @@ class ThemeStore {
     func saveThemes() {
         //jsonEncoder
     }
+    
+    func insertNewElement() -> Theme {
+        //print("вызван shhheeet1")
+        let newTheme = Theme(
+            name: "New Theme",
+            color: RGBA(color: .blue),
+            numberOfPairs: 2,
+            emojis: ""
+        )
+        themes.insert(newTheme, at: 0)
+        //print("вызван shhheeet2")
+        return newTheme
+    }
 }
 
 //Color -> RGBA
@@ -45,5 +58,12 @@ extension RGBA {
         var alpha: CGFloat = 0
         UIColor(color).getRed(&red, green: &green, blue: &blue, alpha: &alpha)
         self.init(red: Double(red), green: Double(green), blue: Double(blue), alpha: Double(alpha))
+    }
+}
+
+//RGBA -> Color
+extension Color {
+    init(rgba: RGBA) {
+        self.init(.sRGB, red: rgba.red, green: rgba.green, blue: rgba.blue, opacity: rgba.alpha)
     }
 }
