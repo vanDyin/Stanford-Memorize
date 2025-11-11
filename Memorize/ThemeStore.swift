@@ -10,6 +10,7 @@ import Observation
 
 @Observable
 class ThemeStore {
+    private let savedKey = "themesData"
     static var initialThemes: [Theme] {[
         Theme(name: "Halloween", color: RGBA(color: .orange), numberOfPairs: 10, emojis: "💀👻🎃🕷️🕸️🪦☠️👿🧟‍♂️👹"),
         Theme(name: "Animals", color: RGBA(color: .red), numberOfPairs: 8, emojis: "🐶🐷🐤🐯🐻🐱🦊🐧"),
@@ -19,24 +20,29 @@ class ThemeStore {
         Theme(name: "Balls", color: RGBA(color: .black), numberOfPairs: 5, emojis: "⚽️🏀🏈🎾🏐")
     ]}
     
-    //create json encoder and decoder for initialize computed property themes
-    var themes: [Theme]
-    
-    //make it so that if jsondata is empty, then take initialThemes
-    init() {
-        self.themes = ThemeStore.initialThemes
+    var themes: [Theme] {
+        didSet {
+            saveThemes()
+        }
     }
     
-    func loadThemes() {
-        //jsonDecoder
+    init() {
+        if let data = UserDefaults.standard.data(forKey: savedKey) {
+            if let loadedData = try? JSONDecoder().decode([Theme].self, from: data) {
+                themes = loadedData
+                return
+            }
+        }
+        themes = ThemeStore.initialThemes
     }
     
     func saveThemes() {
-        //jsonEncoder
+        if let data = try? JSONEncoder().encode(themes) {
+            UserDefaults.standard.set(data, forKey: savedKey)
+        }
     }
     
     func insertNewElement() -> Theme {
-        //print("вызван shhheeet1")
         let newTheme = Theme(
             name: "New Theme",
             color: RGBA(color: .blue),
@@ -44,7 +50,6 @@ class ThemeStore {
             emojis: ""
         )
         themes.insert(newTheme, at: 0)
-        //print("вызван shhheeet2")
         return newTheme
     }
 }
