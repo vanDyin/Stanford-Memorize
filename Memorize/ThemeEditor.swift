@@ -17,6 +17,7 @@ struct ThemeEditor: View {
         Form {
             Section(header: Text("Name")) {
                 TextField("Name", text: $theme.name)
+                    .focused($isTextFieldFocused)
             }
             
             Section(header: Text("Number of Pairs")) {
